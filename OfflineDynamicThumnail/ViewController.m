@@ -42,9 +42,9 @@ static void *kTimeRangesKVO             = &kTimeRangesKVO;
         self.output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:settings];
         [self.player.currentItem addOutput:self.output];
  
-        CMTime vTime = CMTimeMakeWithSeconds(0.1, 90000);
+        CMTime vTime = CMTimeMakeWithSeconds(90000, 90000);
         BOOL foundFrame = [self.output hasNewPixelBufferForItemTime:vTime];
-        if(foundFrame || true){
+        if(foundFrame ){
        
             CIContext *temporaryContext = [CIContext contextWithOptions:nil];
             CVPixelBufferRef pixelBuffer = [self.output copyPixelBufferForItemTime:vTime itemTimeForDisplay:nil];
@@ -62,11 +62,8 @@ static void *kTimeRangesKVO             = &kTimeRangesKVO;
         }else{
             NSLog(@"FrameNotFound");
         }
-        
-
     });
-   
-    
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -75,7 +72,6 @@ static void *kTimeRangesKVO             = &kTimeRangesKVO;
 }
 
 -(void)load {
-    
     
     NSURL * url = [[NSBundle bundleForClass:self.class] URLForResource:@"test" withExtension:@"mp4"];
 
@@ -91,7 +87,6 @@ static void *kTimeRangesKVO             = &kTimeRangesKVO;
     
     [self.player addObserver:self forKeyPath:@"currentItem.loadedTimeRanges"            options:NSKeyValueObservingOptionNew context:kTimeRangesKVO];
     
-    
 }
 
 - (void) observeValueForKeyPath:(NSString*)inKeyPath ofObject:(id)inObject change:(NSDictionary*)inChange context:(void*)inContext
@@ -105,16 +100,12 @@ static void *kTimeRangesKVO             = &kTimeRangesKVO;
                 self.isPlaying = true;
                 self.player.rate = 1.0;
                 self.player.muted = YES;
-              // [self.player play];
-                //
-                
+          
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                     [self generateThumb];
                 });
             }
-         
-           //
-            
+
         }
     } else if (inContext == kTimeRangesKVO){
         NSArray *timeRanges = (NSArray *)[inChange objectForKey:NSKeyValueChangeNewKey];
